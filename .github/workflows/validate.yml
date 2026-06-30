@@ -1,0 +1,25 @@
+name: Validate Demo
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: portal/package-lock.json
+      - name: Install portal deps
+        run: cd portal && npm ci
+      - name: Install Playwright browser
+        run: cd portal && npx playwright install --with-deps chromium
+      - name: Validate
+        run: ./scripts/validate.sh

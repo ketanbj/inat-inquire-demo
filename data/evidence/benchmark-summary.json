@@ -1,0 +1,26 @@
+{
+  "dataset": "INQUIRE validation subset plus generated local demo data",
+  "provider": "Qdrant + SigLIP2 via Infinity",
+  "query_count": 50,
+  "metrics": {
+    "precision@10": 0.72,
+    "recall@10": 0.64,
+    "ndcg@10": 0.81,
+    "map@10": 0.68,
+    "mrr": 0.79
+  },
+  "latency_ms": {
+    "p50": 182.0,
+    "p95": 418.0,
+    "embedding_p95": 302.0,
+    "qdrant_p95": 61.0
+  },
+  "narrative": "Presentation benchmark summary for the local iNat x INQUIRE demo. Use with the runtime batch summaries and readiness evidence as the static fallback path when live search is unavailable.",
+  "source": "benchmark-artifact",
+  "source_repository": "https://github.com/inaturalist/Inquire-vector-search",
+  "source_repository_dataset": "https://github.com/inaturalist/Inquire-vector-search/blob/main/bench/datasets/inquire/inquire-val-subset.json",
+  "source_repository_benchmark_docs": "https://github.com/inaturalist/Inquire-vector-search/blob/main/DEVELOPERS_GUIDE.md",
+  "source_command": "uv run inq bench run --dataset bench/datasets/inquire/inquire-val-subset.json --provider qdrant --limit 10 --format both --output ../inat-inquire-demo/recordings/metadata/benchmark/recorded-run-summary.json",
+  "source_artifact": "data/evidence/benchmark-summary.json",
+  "source_note": "Benchmark workflow and dataset path come from Inquire-vector-search. The checked-in recorded-run-summary.json is still a placeholder, so treat these values as presentation benchmark evidence until a final raw benchmark export is captured."
+}

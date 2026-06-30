@@ -1,0 +1,13 @@
+{
+  "source": "metrics-artifact",
+  "source_repository": "https://github.com/inaturalist/Inquire-vector-search",
+  "source_repository_metrics_docs": "https://github.com/inaturalist/Inquire-vector-search/tree/main/src/foundation/metrics",
+  "source_repository_developer_guide": "https://github.com/inaturalist/Inquire-vector-search/blob/main/DEVELOPERS_GUIDE.md",
+  "source_note": "Metric categories map to Inquire-vector-search pipeline metrics and foundation features. The checked-in values are curated presentation highlights, not a raw metrics scrape committed by this repo.",
+  "collection_size": 20000,
+  "large_run_ingest_rate_per_second": 37.8,
+  "cache_hit_ratio": "41%",
+  "p95_search_latency_ms": 418,
+  "failed_items_recovered_from_dlq": 12,
+  "checkpoint_resume": "enabled"
+}

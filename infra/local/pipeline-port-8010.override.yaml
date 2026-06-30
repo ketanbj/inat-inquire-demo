@@ -1,0 +1,12 @@
+services:
+  infinity:
+    profiles:
+      - infinity
+
+  pipeline:
+    environment:
+      EMBEDDING_PROVIDER: clip
+      CLIP_URL: http://clip:8000
+      SEMANTIC_CACHE_ENABLED: ${DEMO_SEMANTIC_CACHE_ENABLED:-false}
+    ports: !override
+      - "8010:8000"

@@ -1,0 +1,10 @@
+{
+  "status": "placeholder",
+  "purpose": "Replace with final large-run benchmark export before publishing the polished demo.",
+  "expected_command": "uv run inq bench run --dataset bench/datasets/inquire/inquire-val-subset.json --provider qdrant --limit 10 --format both --output ../inat-inquire-demo/recordings/metadata/benchmark/recorded-run-summary.json",
+  "acceptance": {
+    "dataset": "INQUIRE validation or generated live-demo equivalent",
+    "metrics": ["precision@10", "recall@10", "ndcg@10", "map@10", "mrr"],
+    "latency": ["p50", "p95"]
+  }
+}

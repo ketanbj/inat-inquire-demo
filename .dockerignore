@@ -1,0 +1,12 @@
+.git
+.env
+.venv
+node_modules
+portal/dist
+recordings/raw
+recordings/exports
+data/downloads
+data/runtime
+__pycache__
+.pytest_cache
+.ruff_cache

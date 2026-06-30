@@ -1,0 +1,155 @@
+{
+  "source": "operating-model-evidence",
+  "source_repository": "https://github.com/inaturalist/Inquire-vector-search",
+  "source_repository_developer_guide": "https://github.com/inaturalist/Inquire-vector-search/blob/main/DEVELOPERS_GUIDE.md",
+  "source_repository_foundation": "https://github.com/inaturalist/Inquire-vector-search/tree/main/src/foundation",
+  "source_repository_dlq": "https://github.com/inaturalist/Inquire-vector-search/tree/main/src/foundation/dead_letter_queue",
+  "source_note": "Readiness model is derived from Inquire-vector-search architecture, metrics, checkpointing, DLQ, and benchmark capabilities plus demo-specific target operating assumptions. It is not a raw runtime export.",
+  "updated_at": "2026-05-29",
+  "control_plane": {
+    "title": "Managed ingestion control plane",
+    "status": "target architecture",
+    "summary": "Replace presenter-driven shell execution with persisted ingestion runs, batch manifests, operator actions, and promotion gates.",
+    "run_states": [
+      "queued",
+      "seeding",
+      "ingesting",
+      "validating",
+      "promoting",
+      "succeeded",
+      "failed",
+      "rolled_back"
+    ],
+    "operator_actions": [
+      "start batch",
+      "pause or cancel run",
+      "replay failed items",
+      "promote collection version",
+      "rollback alias",
+      "export run manifest"
+    ],
+    "manifest_fields": [
+      "run_id",
+      "source_dataset",
+      "source_row_offset",
+      "object_keys",
+      "image_checksums",
+      "model_version",
+      "collection_version",
+      "quality_gate_result",
+      "cost_estimate",
+      "failure_summary"
+    ]
+  },
+  "collection_management": {
+    "title": "Versioned collections and aliases",
+    "active_alias": "inat-demo-live",
+    "candidate_pattern": "inat-demo-live-v{run_number}",
+    "promotion_policy": "Ingest into a candidate collection, validate point count, smoke search, quality gates, and latency SLOs, then atomically promote the alias.",
+    "rollback_policy": "Keep the previous promoted version and move the alias back if quality, latency, or data-governance checks fail after promotion.",
+    "required_gates": [
+      "collection point count increased as expected",
+      "seed manifest matches ingested object keys",
+      "smoke search returns non-empty results",
+      "benchmark thresholds pass",
+      "p95 search latency remains under SLO",
+      "license and source metadata are present"
+    ]
+  },
+  "observability": {
+    "title": "First-class observability",
+    "slos": [
+      {
+        "name": "Search p95 latency",
+        "target": "<= 500 ms",
+        "signal": "inatinq_search_vector_query_duration_seconds + demo search latency"
+      },
+      {
+        "name": "Ingestion success rate",
+        "target": ">= 99%",
+        "signal": "inatinq_ingestion_documents_processed_total"
+      },
+      {
+        "name": "DLQ age",
+        "target": "<= 24 hours",
+        "signal": "dead-letter queue oldest item age"
+      },
+      {
+        "name": "Promotion quality",
+        "target": "all release gates pass",
+        "signal": "benchmark artifact and manifest validation"
+      }
+    ],
+    "dashboards": [
+      "ingestion run timeline",
+      "Qdrant collection size and query latency",
+      "embedding provider latency and error rate",
+      "cache hit ratio and cache size",
+      "DLQ volume and replay outcome",
+      "cost per batch and projected monthly cost"
+    ],
+    "alerts": [
+      "p95 search latency above SLO",
+      "ingestion failure rate above threshold",
+      "DLQ backlog growing",
+      "checkpoint not advancing",
+      "cost burn above forecast",
+      "quality gate regression"
+    ]
+  },
+  "quality_loop": {
+    "title": "Search quality loop",
+    "release_gates": [
+      {
+        "metric": "precision@10",
+        "threshold": 0.7
+      },
+      {
+        "metric": "recall@10",
+        "threshold": 0.6
+      },
+      {
+        "metric": "ndcg@10",
+        "threshold": 0.78
+      },
+      {
+        "metric": "mrr",
+        "threshold": 0.75
+      },
+      {
+        "metric": "p95_latency_ms",
+        "threshold": 500.0,
+        "direction": "max"
+      }
+    ],
+    "workflow": [
+      "run golden query suite against current and candidate collections",
+      "compare relevance and latency before promotion",
+      "block promotion on quality or latency regression",
+      "store benchmark artifact with run manifest",
+      "surface researcher feedback as future judgments"
+    ]
+  },
+  "resilience_scale": {
+    "title": "Resilience and scalability",
+    "patterns": [
+      "durable queue between source discovery and image workers",
+      "idempotent upserts keyed by source image identity and model version",
+      "checkpointed batch progress with resumable runs",
+      "dead-letter queue replay with operator approval",
+      "rate limits and backpressure around embedding providers",
+      "autoscaled Ray or Databricks worker pools",
+      "separate read and ingest capacity for Qdrant",
+      "backup and restore for object storage, vectors, manifests, and benchmark history"
+    ],
+    "scale_dimensions": [
+      "image count",
+      "embedding model size",
+      "worker concurrency",
+      "Qdrant shard and replica count",
+      "cache capacity",
+      "result freshness requirement",
+      "monthly ingest and query budget"
+    ]
+  }
+}
