@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Start the local source-pipeline stack, reset the demo collection, and ingest batch 1.
+#
+# Usage: ./scripts/live-pipeline-up.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"

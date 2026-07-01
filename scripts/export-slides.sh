@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Export the Marp slide source to PDF.
+#
+# Usage: ./scripts/export-slides.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
@@ -11,5 +14,6 @@ if ! command -v npx >/dev/null 2>&1; then
   exit 1
 fi
 
+mkdir -p "$(dirname "${OUTPUT}")"
 npx @marp-team/marp-cli "${SOURCE}" --pdf --output "${OUTPUT}"
 echo "Exported ${OUTPUT}"

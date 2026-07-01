@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Seed one HF-sampled image batch, submit Ray ingestion, verify search, and write runtime evidence.
+#
+# Usage: ./scripts/live-ingest-batch.sh [positive-batch-number]
+# Normal flow: batch 1 is called by live-pipeline-up.sh; run batch 2 after the first portal search.
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
@@ -6,6 +10,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 require_seed_tools
 set_pipeline_dir
 
+# Keep JSON parsing in Python so the demo has no jq dependency.
 json_field() {
   local expression="$1"
   python3 -c "import json, sys; data=json.load(sys.stdin); print(${expression})"
@@ -76,6 +81,7 @@ if ! [[ "${batch_arg}" =~ ^[0-9]+$ ]] || [ "${batch_arg}" -lt 1 ]; then
   exit 1
 fi
 
+# Resolve environment defaults once so the execution below reads as a linear run.
 PIPELINE_API_URL="${PIPELINE_API_URL:-http://localhost:8010}"
 RAY_API_URL="${RAY_API_URL:-http://localhost:8265}"
 QDRANT_API_URL="${QDRANT_API_URL:-http://localhost:6333}"
@@ -106,11 +112,13 @@ wait_for_url "${MINIO_PUBLIC_URL}/minio/health/live" "MinIO"
 
 mkdir -p "$(dirname "${seed_summary_path}")" "$(dirname "${run_summary_path}")"
 
+# Batch prefixes are cleared by default so rerunning the same batch is repeatable.
 clear_prefix_flag=(--clear-prefix)
 if [ "${DEMO_CLEAR_S3_PREFIX:-1}" = "0" ]; then
   clear_prefix_flag=(--no-clear-prefix)
 fi
 
+# Skip photo IDs from earlier batch summaries so before/after searches can show new images.
 exclude_summary_args=()
 exclude_summary_count=0
 for existing_summary in "${ROOT_DIR}"/data/runtime/hf-live-seed-batch-*.json; do
@@ -124,6 +132,7 @@ done
 points_before="$(collection_points "${DEMO_LIVE_COLLECTION}")"
 run_start_epoch="$(date +%s)"
 
+# Resolve image bytes from iNaturalist Open Data and upload them to MinIO.
 echo "Seeding batch ${batch_index} from HF row offset ${start_offset}"
 seed_command=(
   "${UV_BIN}" run --project "${PIPELINE_DIR}" \
@@ -158,6 +167,7 @@ print(json.dumps({
 PY
 )"
 
+# Submit the existing source-pipeline Ray ingestion job and poll until it finishes.
 echo "Submitting Ray ingestion batch ${batch_index} to ${DEMO_LIVE_COLLECTION}"
 job_response="$(curl -fsS -X POST "${PIPELINE_API_URL}/ray/jobs/images" \
   -H 'Content-Type: application/json' \
@@ -201,6 +211,7 @@ if [ "${elapsed_seconds}" -le 0 ]; then
   elapsed_seconds=1
 fi
 
+# Verify that the updated collection is searchable before reporting success.
 search_json="$(curl -fsS --get "${PIPELINE_API_URL}/search/images" \
   --data-urlencode "q=${DEMO_VERIFY_QUERY}" \
   --data-urlencode "limit=5" \

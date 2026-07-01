@@ -1,20 +1,13 @@
 #!/usr/bin/env bash
+# Run the source-pipeline benchmark and save the result under recordings metadata.
+#
+# Usage: ./scripts/record-large.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 
-pipeline_path="${INQUIRE_VECTOR_SEARCH_PATH:-../Inquire-vector-search}"
-if [[ "${pipeline_path}" = /* ]]; then
-  PIPELINE_DIR="${pipeline_path}"
-else
-  PIPELINE_DIR="${ROOT_DIR}/${pipeline_path}"
-fi
+set_pipeline_dir
 OUTPUT="${ROOT_DIR}/recordings/metadata/benchmark/recorded-run-summary.json"
-
-if [ ! -d "${PIPELINE_DIR}" ]; then
-  echo "Pipeline repo not found: ${PIPELINE_DIR}"
-  exit 1
-fi
 
 require_uv "to run the source pipeline benchmark"
 

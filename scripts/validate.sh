@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Run the local validation suite used by CI.
+#
+# Usage: ./scripts/validate.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
@@ -117,7 +120,7 @@ if command -v npm >/dev/null 2>&1 && [ -d "${ROOT_DIR}/portal/node_modules" ]; t
       npm run visual-check
   )
 else
-  echo "Skipping portal checks; npm or node_modules unavailable."
+  echo "Skipping portal checks; npm or portal/node_modules unavailable. Run ./scripts/bootstrap.sh to include them."
 fi
 
 echo "Validation complete."

@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Shared helpers for the clone-and-run demo scripts.
+#
+# The helpers intentionally avoid extra dependencies such as jq. Scripts source
+# this file, read .env defaults, and then prefer explicitly exported environment
+# variables when a caller wants to override local-demo behavior.
+
 COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="${ROOT_DIR:-$(cd "${COMMON_DIR}/../.." && pwd)}"
 
@@ -72,7 +78,12 @@ require_seed_tools() {
 }
 
 set_pipeline_dir() {
-  PIPELINE_DIR="$(resolve_from_root "${INQUIRE_VECTOR_SEARCH_PATH:-../Inquire-vector-search}")"
+  local configured_path="${INQUIRE_VECTOR_SEARCH_PATH:-../Inquire-vector-search}"
+  if ! PIPELINE_DIR="$(resolve_from_root "${configured_path}")"; then
+    echo "Pipeline repo not found: ${configured_path}" >&2
+    echo "Set INQUIRE_VECTOR_SEARCH_PATH in ${ROOT_DIR}/.env when the source repo is elsewhere." >&2
+    exit 1
+  fi
   export PIPELINE_DIR
 }
 
@@ -86,11 +97,16 @@ set_pipeline_compose_context() {
 
 resolve_from_root() {
   local candidate="$1"
+  local absolute_path
   if [[ "${candidate}" = /* ]]; then
-    printf '%s\n' "${candidate}"
+    absolute_path="${candidate}"
   else
-    (cd "${ROOT_DIR}" && cd "${candidate}" && pwd)
+    absolute_path="${ROOT_DIR}/${candidate}"
   fi
+  if [ ! -d "${absolute_path}" ]; then
+    return 1
+  fi
+  (cd "${absolute_path}" && pwd)
 }
 
 require_command() {

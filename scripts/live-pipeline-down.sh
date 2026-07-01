@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Stop the local source-pipeline stack used by the demo.
+#
+# Usage: ./scripts/live-pipeline-down.sh
+# Set DEMO_REMOVE_VOLUMES=1 to also remove Docker volumes.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

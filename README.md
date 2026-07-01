@@ -169,6 +169,9 @@ infra/local/         Local pipeline compose overrides
 scripts/             Bootstrap, live demo, validation, export helpers
 ```
 
+See [scripts/README.md](scripts/README.md) for the script catalog, normal
+operator flow, and common environment overrides.
+
 ## Demo Modes
 
 - **Live local**: Uses the existing pipeline stack, HF-sampled iNaturalist
