@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-# Run the source-pipeline benchmark and save the result under recordings metadata.
+# Optional evidence refresh for the demo's "large-run" benchmark story.
+#
+# This does not start the live demo. It runs the source pipeline's benchmark
+# command and records the output artifact used by docs/slides/fallback evidence
+# when presenting scale or quality results beyond the small laptop ingest path.
 #
 # Usage: ./scripts/record-large.sh
 set -euo pipefail

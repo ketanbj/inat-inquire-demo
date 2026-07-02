@@ -34,7 +34,7 @@ Run validation before rehearsals or handoff:
 | `seed-hf-inat-sample.py` | Lower-level sampler/uploader used by `live-ingest-batch.sh`. Resolves image bytes from iNaturalist Open Data and uploads to MinIO. | `live-ingest-batch.sh`; direct use only for debugging seed data. |
 | `check-coverage.py` | Fails validation when any covered backend source file falls below the configured coverage threshold. | `validate.sh`. |
 | `export-slides.sh` | Exports the Marp slide source to `slides/exports/inat-inquire-demo.pdf`. | Human operator when updating slides. |
-| `record-large.sh` | Runs the source-pipeline benchmark and writes `recordings/metadata/benchmark/recorded-run-summary.json`. | Human operator when refreshing benchmark evidence. |
+| `record-large.sh` | Optional large-run evidence capture: runs the source-pipeline benchmark and writes `recordings/metadata/benchmark/recorded-run-summary.json` for docs/slides/fallback evidence. | Human operator when refreshing benchmark evidence. |
 | `lib/common.sh` | Shared helper library for `.env` loading, tool checks, source-pipeline path resolution, Docker checks, and readiness polling. | Sourced by shell scripts. |
 
 ## Important Environment Variables
