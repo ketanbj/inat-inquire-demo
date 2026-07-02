@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
+# Optional evidence refresh for the demo's "large-run" benchmark story.
+#
+# This does not start the live demo. It runs the source pipeline's benchmark
+# command and records the output artifact used by docs/slides/fallback evidence
+# when presenting scale or quality results beyond the small laptop ingest path.
+#
+# Usage: ./scripts/record-large.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
 
-pipeline_path="${INQUIRE_VECTOR_SEARCH_PATH:-../Inquire-vector-search}"
-if [[ "${pipeline_path}" = /* ]]; then
-  PIPELINE_DIR="${pipeline_path}"
-else
-  PIPELINE_DIR="${ROOT_DIR}/${pipeline_path}"
-fi
+set_pipeline_dir
 OUTPUT="${ROOT_DIR}/recordings/metadata/benchmark/recorded-run-summary.json"
-
-if [ ! -d "${PIPELINE_DIR}" ]; then
-  echo "Pipeline repo not found: ${PIPELINE_DIR}"
-  exit 1
-fi
 
 require_uv "to run the source pipeline benchmark"
 

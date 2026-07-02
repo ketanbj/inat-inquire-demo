@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Start the FastAPI backend and Vite portal for the local live demo.
+#
+# Usage: ./scripts/local-live.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"

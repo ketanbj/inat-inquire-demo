@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Prepare a fresh clone for local demo use.
+#
+# Usage: ./scripts/bootstrap.sh
 set -euo pipefail
 
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/common.sh"
